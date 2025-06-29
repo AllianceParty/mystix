@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Achievers</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Space+Mono&display=swap');
+        
+        :root {
+            --dark-space: #0a0a20;
+            --deep-space: #050510;
+            --star-white: #ffffff;
+            --comet-yellow: #ffcc39;
+            --supernova: #ffd700;
+            --accent-yellow: #ffee58;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: var(--deep-space);
+            color: white;
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+        
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: var(--star-white);
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+            opacity: 0;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: var(--opacity); transform: scale(1); }
+        }
+        
+        .comet {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1), var(--comet-yellow));
+            border-radius: 50%;
+            box-shadow: 0 0 8px 2px var(--comet-yellow);
+            animation: cometFly var(--duration) linear infinite;
+            opacity: 0;
+        }
+        
+        @keyframes cometFly {
+            0% { transform: translateX(0) translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(calc(var(--tx) * 1px)) translateY(calc(var(--ty) * 1px)); opacity: 0; }
+        }
+        
+        header {
+            background: linear-gradient(to bottom, rgba(10,10,32,0.9), transparent);
+            padding: 2rem 0;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            background: linear-gradient(to right, var(--star-white), var(--accent-yellow));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(255, 204, 57, 0.3);
+            margin-bottom: 1rem;
+            transition: all 0.5s ease;
+        }
+        
+        h1:hover {
+            text-shadow: 0 0 30px rgba(255, 204, 57, 0.6);
+            transform: scale(1.02);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-yellow);
+            font-size: 2rem;
+            margin: 2rem 0 1rem;
+            border-bottom: 2px solid var(--accent-yellow);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        
+        .achievers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .achiever-card {
+            background: rgba(20, 20, 40, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 204, 57, 0.2);
+            box-shadow: 0 0 15px rgba(255, 204, 57, 0.1);
+            transform-style: preserve-3d;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .achiever-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 204, 57, 0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .achiever-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 15px 30px rgba(255, 204, 57, 0.2);
+            border-color: rgba(255, 204, 57, 0.4);
+        }
+        
+        .achiever-card:hover::before {
+            opacity: 1;
+            animation: shine 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: rotate(45deg) translateX(-100%); }
+            100% { transform: rotate(45deg) translateX(100%); }
+        }
+        
+        .achiever-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent-yellow);
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        
+        .achiever-event {
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+        
+        .achiever-description {
+            line-height: 1.5;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.7rem 1.5rem;
+            background-color: transparent;
+            color: var(--accent-yellow);
+            border: 2px solid var(--accent-yellow);
+            border-radius: 30px;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+            box-shadow: 0 0 10px rgba(255, 204, 57, 0.2);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 204, 57, 0.4), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .btn:hover {
+            background-color: rgba(255, 204, 57, 0.1);
+            box-shadow: 0 0 20px rgba(255, 204, 57, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .mentions-list {
+            list-style-type: none;
+            margin: 2rem 0;
+        }
+        
+        .mention-item {
+            background: rgba(20, 20, 40, 0.7);
+            border-left: 4px solid var(--accent-yellow);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            transform-origin: left center;
+        }
+        
+        .mention-item:hover {
+            transform: scaleX(1.02);
+            background: rgba(30, 30, 50, 0.8);
+            box-shadow: 0 0 15px rgba(255, 204, 57, 0.2);
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10,10,32,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-container {
+            background: rgba(20, 20, 40, 0.95);
+            border: 1px solid var(--comet-yellow);
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            padding: 2rem;
+            box-shadow: 0 0 30px rgba(255, 204, 57, 0.3);
+            transform: translateY(-50px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid var(--accent-yellow);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-yellow);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-subtitle {
+            color: var(--star-white);
+            font-style: italic;
+        }
+        
+        .modal-body {
+            margin: 1.5rem 0;
+            line-height: 1.6;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            border: none;
+            color: var(--accent-yellow);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            transform: rotate(90deg);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 204, 57, 0.2);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .achievers-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="space-background" id="space"></div>
+    
+    <header>
+        <h1>Achievers & Mentions</h1>
+        <p>Celebrating stellar achievements in our school galaxy</p>
+    </header>
+    
+    <div class="container">
+        <section class="achievers-section">
+            <h2 class="section-title">Stellar Achievers</h2>
+            <div class="achievers-grid">
+                <div class="achiever-card">
+                    <h3 class="achiever-name">TEST</h3>
+                    <p class="achiever-event">State Science Olympiad</p>
+                    <p class="achiever-description">Gold medal winner in Astrophysics category with perfect score.</p>
+                    <button class="btn">View Details</button>
+                </div>
+                
+                <div class="achiever-card">
+                    <h3 class="achiever-name">TEST</h3>
+                    <p class="achiever-event">National Math League</p>
+                    <p class="achiever-description">Ranked #1 nationally in Algebra division.</p>
+                    <button class="btn">View Details</button>
+                </div>
+                
+                <div class="achiever-card">
+                    <h3 class="achiever-name">TEST</h3>
+                    <p class="achiever-event">Robotics Competition</p>
+                    <p class="achiever-description">Led team to regional finals with innovative robotic arm design.</p>
+                    <button class="btn">View Details</button>
+                </div>
+                
+                <div class="achiever-card">
+                    <h3 class="achiever-name">TEST</h3>
+                    <p class="achiever-event">Debate Championship</p>
+                    <p class="achiever-description">Named top speaker at international tournament.</p>
+                    <button class="btn">View Details</button>
+                </div>
+                
+                <div class="achiever-card">
+                    <h3 class="achiever-name">TEST</h3>
+                    <p class="achiever-event">Music Competition</p>
+                    <p class="achiever-description">Composed original symphony performed by youth orchestra.</p>
+                    <button class="btn">View Details</button>
+                </div>
+                
+                <div class="achiever-card">
+                    <h3 class="achiever-name">TEST</h3>
+                    <p class="achiever-event">Art Exhibition</p>
+                    <p class="achiever-description">Featured artist in statewide student art show.</p>
+                    <button class="btn">View Details</button>
+                </div>
+            </div>
+        </section>
+        
+        <section class="mentions-section">
+            <h2 class="section-title">Celestial Mentions</h2>
+            <ul class="mentions-list">
+                <li class="mention-item">
+                    <strong>Tech Club</strong> - Recognized by mayor for community coding initiative.
+                </li>
+                <li class="mention-item">
+                    <strong>Basketball Team</strong> - Featured in local news for championship performance.
+                </li>
+                <li class="mention-item">
+                    <strong>School Choir</strong> - Invited to perform at state capitol building.
+                </li>
+                <li class="mention-item">
+                    <strong>Green Team</strong> - Received sustainability award for recycling program.
+                </li>
+                <li class="mention-item">
+                    <strong>Yearbook Committee</strong> - Won national design award for innovative layout.
+                </li>
+            </ul>
+        </section>
+    </div>
+    
+    <footer>
+        <p>Celebrating achievements across the universe</p>
+    </footer>
+    
+    <!-- Modal Structure -->
+    <div class="modal-overlay" id="achieverModal">
+        <div class="modal-container">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Achiever Name</h3>
+                <p class="modal-subtitle" id="modalSubtitle">Event Name</p>
+            </div>
+            <div class="modal-body" id="modalBody">
+                Achievement details here...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create twinkling stars
+        function createStars() {
+            const space = document.getElementById('space');
+            const starCount = 200;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random properties
+                const size = Math.random() * 3 + 1;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const opacity = Math.random() * 0.8 + 0.2;
+                const duration = Math.random() * 10 + 5;
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${posX}%`;
+                star.style.top = `${posY}%`;
+                star.style.setProperty('--opacity', opacity);
+                star.style.setProperty('--duration', `${duration}s`);
+                
+                space.appendChild(star);
+            }
+        }
+        
+        // Create shooting comets
+        function createComets() {
+            const space = document.getElementById('space');
+            const cometCount = 8;
+            
+            for (let i = 0; i < cometCount; i++) {
+                const comet = document.createElement('div');
+                comet.classList.add('comet');
+                
+                // Random properties
+                const startX = Math.random() * 100;
+                const startY = Math.random() * 30;
+                const travelX = Math.random() * 1000 + 500;
+                const travelY = Math.random() * 500 + 100;
+                const duration = Math.random() * 15 + 10;
+                const delay = Math.random() * 30;
+                
+                comet.style.left = `${startX}%`;
+                comet.style.top = `${startY}%`;
+                comet.style.setProperty('--tx', travelX);
+                comet.style.setProperty('--ty', travelY);
+                comet.style.setProperty('--duration', `${duration}s`);
+                comet.style.animationDelay = `${delay}s`;
+                
+                space.appendChild(comet);
+            }
+        }
+        
+        // Card hover effects
+        function setupCardEffects() {
+            const cards = document.querySelectorAll('.achiever-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const angleX = (centerY - y) / 20;
+                    const angleY = (centerX - x) / 20;
+                    
+                    card.style.transform = `rotateX(${angleX}deg) rotateY(${angleY}deg)`;
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                });
+            });
+        }
+        
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            createComets();
+            setupCardEffects();
+            
+            // Add modal functionality
+            const modal = document.getElementById('achieverModal');
+            const modalClose = document.getElementById('modalClose');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalSubtitle = document.getElementById('modalSubtitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            // Button click functionality
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const card = btn.parentElement;
+                    modalTitle.textContent = card.querySelector('.achiever-name').textContent;
+                    modalSubtitle.textContent = card.querySelector('.achiever-event').textContent;
+                    
+                    // Create richer modal content
+                    const description = card.querySelector('.achiever-description').textContent;
+                    modalBody.innerHTML = `
+                        <p><strong>Achievement:</strong> ${description}</p>
+                        <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                        <p><strong>Recognition:</strong> School Honors Program</p>
+                        <div class="modal-footer" style="margin-top: 1.5rem; border-top: 1px solid rgba(255, 204, 57, 0.2); padding-top: 1rem;">
+                            <p style="color: var(--accent-yellow); font-style: italic;">Congratulations on this stellar achievement!</p>
+                        </div>
+                    `;
+                    
+                    modal.classList.add('active');
+                });
+            });
+            
+            // Close modal functionality
+            modalClose.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+            
+            // Close when clicking outside modal
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

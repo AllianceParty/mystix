@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Your Calendars</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --yellow-accent: #FFD700;
+            --dark-space: #0A0E17;
+            --space-blue: #121A2F;
+            --star-white: #E0E0E0;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--dark-space);
+            color: var(--star-white);
+            overflow-x: hidden;
+        }
+
+        .stellar-bg {
+            background: radial-gradient(ellipse at center, var(--space-blue) 0%, var(--dark-space) 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stellar-bg::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(white 1px, transparent 1px),
+                radial-gradient(white 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .header-glow {
+            text-shadow: 0 0 10px var(--yellow-accent), 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .event-card {
+            background: rgba(18, 26, 47, 0.7);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.2);
+            border-color: var(--yellow-accent);
+        }
+
+        .yellow-btn {
+            background-color: var(--yellow-accent);
+            color: var(--dark-space);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(255, 215, 0, 0.2);
+        }
+
+        .yellow-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .yellow-trim {
+            border-bottom: 2px solid var(--yellow-accent);
+        }
+
+        .comet {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px var(--yellow-accent);
+            animation: comet 10s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes comet {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(100vw, -100vh);
+                opacity: 0;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .rotate {
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body class="stellar-bg">
+    <div id="comets-container"></div>
+
+    <div class="container mx-auto px-4 py-12">
+        <!-- Header Section -->
+        <header class="text-center mb-16 fade-in">
+            <h1 class="text-5xl font-bold mb-4 header-glow">Mark Your Calendars</h1>
+            <p class="text-xl max-w-2xl mx-auto">Upcoming stellar events you won't want to miss in the cosmic calendar</p>
+            <div class="yellow-trim w-32 mx-auto mt-6"></div>
+        </header>
+
+        <!-- Events Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            <!-- Event 1 -->
+            <div class="event-card p-6 fade-in" style="animation-delay: 0.1s;">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center mr-4 pulse">
+                        <span class="text-black font-bold">15</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">TEST</h3>
+                        <p class="text-sm text-gray-400">June 15, 2025</p>
+                    </div>
+                </div>
+                <p class="mb-4">Annual gathering of interstellar scientists to discuss cosmic discoveries.</p>
+                <div class="flex justify-between items-center">
+                    <span class="px-3 py-1 bg-gray-800 rounded-full text-xs">Science</span>
+                    <button class="learn-more-btn yellow-btn px-4 py-2 rounded-full text-sm">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Event 2 -->
+            <div class="event-card p-6 fade-in" style="animation-delay: 0.2s;">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center mr-4 pulse">
+                        <span class="text-black font-bold">22</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">TEST</h3>
+                        <p class="text-sm text-gray-400">June 22, 2025</p>
+                    </div>
+                </div>
+                <p class="mb-4">Annual Perseid meteor shower peak viewing night at the observatory.</p>
+                <div class="flex justify-between items-center">
+                    <span class="px-3 py-1 bg-gray-800 rounded-full text-xs">Astronomy</span>
+                    <button class="learn-more-btn yellow-btn px-4 py-2 rounded-full text-sm">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Event 3 -->
+            <div class="event-card p-6 fade-in" style="animation-delay: 0.3s;">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center mr-4 pulse">
+                        <span class="text-black font-bold">30</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">TEST</h3>
+                        <p class="text-sm text-gray-400">June 30, 2025</p>
+                    </div>
+                </div>
+                <p class="mb-4">Exhibition of cutting-edge space technology from leading aerospace companies.</p>
+                <div class="flex justify-between items-center">
+                    <span class="px-3 py-1 bg-gray-800 rounded-full text-xs">Technology</span>
+                    <button class="learn-more-btn yellow-btn px-4 py-2 rounded-full text-sm">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Event 4 -->
+            <div class="event-card p-6 fade-in" style="animation-delay: 0.4s;">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center mr-4 pulse">
+                        <span class="text-black font-bold">05</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">TEST</h3>
+                        <p class="text-sm text-gray-400">July 5, 2025</p>
+                    </div>
+                </div>
+                <p class="mb-4">Special presentation: "The Birth and Death of Stars" narrated by Dr. Neil deGrasse Tyson.</p>
+                <div class="flex justify-between items-center">
+                    <span class="px-3 py-1 bg-gray-800 rounded-full text-xs">Education</span>
+                    <button class="learn-more-btn yellow-btn px-4 py-2 rounded-full text-sm">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Event 5 -->
+            <div class="event-card p-6 fade-in" style="animation-delay: 0.5s;">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center mr-4 pulse">
+                        <span class="text-black font-bold">12</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">TEST</h3>
+                        <p class="text-sm text-gray-400">July 12, 2025</p>
+                    </div>
+                </div>
+                <p class="mb-4">Learn how to capture stunning images of the night sky with professional equipment.</p>
+                <div class="flex justify-between items-center">
+                    <span class="px-3 py-1 bg-gray-800 rounded-full text-xs">Photography</span>
+                    <button class="learn-more-btn yellow-btn px-4 py-2 rounded-full text-sm">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Event 6 -->
+            <div class="event-card p-6 fade-in" style="animation-delay: 0.6s;">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center mr-4 pulse">
+                        <span class="text-black font-bold">20</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">TEST</h3>
+                        <p class="text-sm text-gray-400">July 20, 2025</p>
+                    </div>
+                </div>
+                <p class="mb-4">Celebrate the anniversary of the first moon landing with special guests and exhibits.</p>
+                <div class="flex justify-between items-center">
+                    <span class="px-3 py-1 bg-gray-800 rounded-full text-xs">History</span>
+                    <button class="learn-more-btn yellow-btn px-4 py-2 rounded-full text-sm">Learn More</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Newsletter Section -->
+        <div class="max-w-2xl mx-auto bg-gray-900 bg-opacity-50 rounded-xl p-8 border border-yellow-500 border-opacity-30 mb-16 fade-in">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold mb-2">Stay Updated</h2>
+                <p class="text-gray-400">Subscribe to our cosmic newsletter for event updates</p>
+            </div>
+            <form class="flex flex-col sm:flex-row gap-4">
+                <input type="email" placeholder="Your email address" class="flex-grow px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                <button class="yellow-btn px-6 py-3 rounded-lg font-semibold">Subscribe</button>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center py-8 border-t border-gray-800">
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/234b083b-093f-4bf7-a7b7-e610206dac18.png" alt="Twitter icon" class="w-6 h-6" />
+                </a>
+                <a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/4a768596-b63d-4939-b972-79ad8de2ffe9.png" alt="Facebook icon" class="w-6 h-6" />
+                </a>
+                <a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/bf1b1840-3945-4f02-b231-4958eab6350d.png" alt="Instagram icon" class="w-6 h-6" />
+                </a>
+            </div>
+            <p class="text-gray-500 text-sm">© 2025-26 Cosmic Events. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Modal for event details -->
+    <div id="eventModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-900 rounded-xl p-8 max-w-lg w-full mx-4 border border-yellow-500">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-2xl font-bold"></h3>
+                <button id="closeModal" class="text-gray-400 hover:text-yellow-500">✕</button>
+            </div>
+            <img id="modalImage" src="https://tse3.mm.bing.net/th/id/OIP.BoGx9K1Z9msJJ44KNojYsAHaE7?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="" class="w-full h-48 object-cover mb-4 rounded-lg">
+            <p id="modalDate" class="text-yellow-500 mb-2"></p>
+            <p id="modalDescription" class="mb-4"></p>
+            <div class="flex justify-end">
+                <button class="yellow-btn px-4 py-2 rounded">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create comets
+        function createComets() {
+            const container = document.getElementById('comets-container');
+            for (let i = 0; i < 5; i++) {
+                const comet = document.createElement('div');
+                comet.className = 'comet';
+                comet.style.left = `${Math.random() * 100}vw`;
+                comet.style.top = `${Math.random() * 100}vh`;
+                comet.style.animationDelay = `${Math.random() * 10}s`;
+                container.appendChild(comet);
+            }
+        }
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', () => {
+            createComets();
+            
+            // Add hover effect to event cards
+            const cards = document.querySelectorAll('.event-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.querySelector('.pulse').style.animation = 'pulse 1s infinite';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.querySelector('.pulse').style.animation = 'pulse 2s infinite';
+                });
+            });
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('eventModal');
+        const closeModal = document.getElementById('closeModal');
+        
+        document.querySelectorAll('.learn-more-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const card = this.closest('.event-card');
+                document.getElementById('modalTitle').textContent = 
+                    card.querySelector('h3.text-xl').textContent;
+                document.getElementById('modalDate').textContent = 
+                    card.querySelector('p.text-sm').textContent;
+                document.getElementById('modalDescription').textContent = 
+                    card.querySelector('p.mb-4').textContent;
+                
+                modal.classList.remove('hidden');
+            });
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

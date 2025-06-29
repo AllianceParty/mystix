@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Event Registration</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <style>
+        :root {
+            --primary: #ffcc00;
+            --error: #ff3333;
+            --success: #00ff99;
+            --gray: #999999;
+            --dark: #0a0a1a;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            background-image: radial-gradient(ellipse at top, rgba(255, 204, 0, 0.1) 0%, transparent 80%),
+                              radial-gradient(ellipse at bottom, rgba(0, 255, 255, 0.1) 0%, transparent 80%),
+                              url('https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b4eb3d90-ab56-414d-bcfb-e0a3fd8e9ed5.png');
+            background-size: cover;
+            background-attachment: fixed;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            color: white;
+            animation: cosmicPulse 15s infinite alternate;
+        }
+
+        @keyframes cosmicPulse {
+            0% { background-color: #0a0a1a; }
+            50% { background-color: #15152a; }
+            100% { background-color: #0a0a1a; }
+        }
+
+        .container {
+            background-color: rgba(10, 10, 26, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.3),
+                        0 0 40px rgba(0, 255, 255, 0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid var(--primary);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.5),
+                        0 0 60px rgba(0, 255, 255, 0.2);
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--gray);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+            height: 1.25rem;
+        }
+
+        .event-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn {
+            background-color: var(--primary);
+            color: var(--dark);
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.8);
+        }
+
+        .submit-btn:disabled {
+            background-color: #333344;
+            color: #666677;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+            opacity: 0.7;
+        }
+
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover::after {
+            left: 100%;
+        }
+
+        .submit-btn:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+        }
+
+        #success-message {
+            color: var(--success);
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 600;
+            display: none;
+        }
+
+        .modal-error {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: var(--dark);
+            padding: 2rem;
+            border: 2px solid var(--error);
+            border-radius: 10px;
+            max-width: 80%;
+            text-align: center;
+            color: white;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Event Registration</h1>
+        
+        <form id="registrationForm" action="https://formsubmit.co/alliance.helpdesk@hotmail.com" method="POST">
+            <!-- This can be changed to any FormSubmit email -->
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_next" value="?success=true">
+            
+            <div class="form-group">
+                <label for="uuid">UUID</label>
+                <input type="text" id="uuid" name="uuid" placeholder="Enter your access code" required>
+            </div>
+
+            <div class="form-group">
+                <label for="event-type">Event Type</label>
+                <select id="event-type" name="event-type" required>
+                    <option value="" disabled selected>Select an event type</option>
+                    <option value="cosmic-exploration">Cosmic Exploration</option>
+                    <option value="stellar-workshop">Stellar Workshop</option>
+                    <option value="galactic-seminar">Galactic Seminar</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="consent">Consent</label>
+                <select id="consent" name="consent" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submit-btn">Submit</button>
+            <div id="success-message">Form submitted successfully!</div>
+        </form>
+    </div>
+    
+    <div class="modal-error" id="uuid-modal-error">
+        <div class="modal-content">
+            <h2>Invalid Access Code</h2>
+            <p>The code you entered is not recognized.</p>
+            <button onclick="document.getElementById('uuid-modal-error').style.display = 'none'" 
+                    style="background: var(--primary); padding: 10px 20px; border: none; border-radius: 5px; margin-top: 20px; cursor: pointer;">
+                Try Again
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // List of valid UUIDs (replace with your actual UUIDs)
+            const validUUIDs = [
+                'A1B2C3D4',
+                'X7Y8Z9W0',
+                'M5N6P7Q8'
+            ];
+
+            const form = document.getElementById('registrationForm');
+            const uuidInput = document.getElementById('uuid');
+            const uuidError = document.getElementById('uuid-error');
+            const eventDropdown = document.getElementById('event-type');
+            const newEventInput = document.getElementById('new-event');
+            const addEventBtn = document.getElementById('add-event');
+            const removeEventBtn = document.getElementById('remove-event');
+            const submitBtn = document.getElementById('submit-btn');
+            const successMessage = document.getElementById('success-message');
+
+            // Check URL for success parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('success') === 'true') {
+                form.style.display = 'none';
+                successMessage.style.display = 'block';
+            }
+
+            // UUID validation - only check against the list
+            function validateUUID(uuid) {
+                return validUUIDs.includes(uuid.trim());
+            }
+
+            uuidInput.addEventListener('input', function() {
+                if (this.value.trim() === '') {
+                    uuidError.style.display = 'none';
+                    return;
+                }
+
+                if (!validateUUID(this.value)) {
+                    uuidError.style.display = 'block';
+                } else {
+                    uuidError.style.display = 'none';
+                }
+            });
+
+            // Form submission validation
+            form.addEventListener('submit', function(e) {
+                if (!validateUUID(uuidInput.value)) {
+                    e.preventDefault();
+                    document.getElementById('uuid-modal-error').style.display = 'flex';
+                    return;
+                }
+                if (document.getElementById('consent').value !== 'yes') {
+                    e.preventDefault();
+                    document.getElementById('uuid-modal-error').style.display = 'flex';
+                    document.querySelector('.modal-content h2').textContent = 'Consent Required';
+                    document.querySelector('.modal-content p').textContent = 'You must consent to proceed';
+                }
+            });
+
+            // Dynamic event management
+            addEventBtn.addEventListener('click', function() {
+                const newEvent = newEventInput.value.trim();
+                if (newEvent) {
+                    // Check if event already exists
+                    const exists = Array.from(eventDropdown.options).some(
+                        option => option.value === newEvent.toLowerCase()
+                    );
+                    
+                    if (!exists) {
+                        const option = new Option(newEvent, newEvent.toLowerCase());
+                        eventDropdown.add(option);
+                        newEventInput.value = '';
+                    }
+                }
+            });
+
+            removeEventBtn.addEventListener('click', function() {
+                if (eventDropdown.selectedIndex > 0) { // Don't remove the placeholder
+                    eventDropdown.remove(eventDropdown.selectedIndex);
+                }
+            });
+
+            // Handle consent changes
+            document.getElementById('consent').addEventListener('change', function() {
+                const consentGiven = this.value === 'yes';
+                submitBtn.disabled = !consentGiven;
+                if (!consentGiven) {
+                    submitBtn.style.opacity = '0.7';
+                } else {
+                    submitBtn.style.opacity = '1';
+                }
+            });
+            
+            // Initialize button state based on default consent value
+            submitBtn.disabled = document.getElementById('consent').value !== 'yes';
+        });
+    </script>
+</body>
+</html>

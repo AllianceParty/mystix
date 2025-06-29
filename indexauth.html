@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authorisation Portal</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
+        
+        :root {
+            --cosmic-yellow: #EAB308;
+            --cosmic-yellow-light: rgba(234, 179, 8, 0.2);
+        }
+        
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: 
+                radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%), 
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.1));
+            overflow-x: hidden;
+            min-height: 100vh;
+            color: var(--cosmic-yellow);
+        }
+
+        /* Cosmic Backdrop - Full Coverage */
+        .cosmic-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(234, 179, 8, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(234, 179, 8, 0.05) 0%, transparent 20%);
+        }
+
+        /* Starfield */
+        #stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        /* Twinkling Stars */
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle 1.5s infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Cosmic Elements */
+        .cosmic-glow {
+            box-shadow: 
+                0 0 15px rgba(234, 179, 8, 0.6), 
+                0 0 30px rgba(234, 179, 8, 0.3);
+        }
+
+        .cosmic-border {
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            transition: all 0.3s ease-out;
+        }
+
+        .cosmic-border:hover {
+            border-color: rgba(234, 179, 8, 0.7);
+            box-shadow: 0 0 20px rgba(234, 179, 8, 0.2);
+        }
+
+        /* Input Fields */
+        .cosmic-input {
+            background-color: rgba(15, 23, 42, 0.7);
+            color: #EAB308;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .cosmic-input:focus {
+            border-color: #EAB308;
+            box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Buttons */
+        .cosmic-btn {
+            background: linear-gradient(135deg, var(--cosmic-yellow) 0%, #F59E0B 100%);
+            color: #111827;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cosmic-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(234, 179, 8, 0.4);
+        }
+
+        .cosmic-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .cosmic-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+
+        /* Titles */
+        .cosmic-title {
+            text-shadow: 0 0 10px rgba(234, 179, 8, 0.7);
+            position: relative;
+            display: inline-block;
+        }
+
+        .cosmic-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cosmic-yellow), transparent);
+        }
+
+        /* Popups */
+        .cosmic-popup {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.95) 100%);
+            border: 1px solid rgba(234, 179, 8, 0.5);
+            box-shadow: 0 0 40px rgba(234, 179, 8, 0.3);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        @keyframes popIn {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Error Popup */
+        .cosmic-error {
+            background: linear-gradient(135deg, rgba(39, 15, 42, 0.95) 0%, rgba(23, 2, 23, 0.95) 100%);
+            border: 1px solid rgba(220, 38, 38, 0.5);
+            box-shadow: 0 0 40px rgba(220, 38, 38, 0.3);
+        }
+
+        /* Loading Animation */
+        .loading-dots::after {
+            content: '...';
+            animation: dots 1.5s steps(3, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center py-12 px-4 relative">
+    <!-- Cosmic Backdrop -->
+    <div class="cosmic-backdrop"></div>
+    
+    <!-- Starfield -->
+    <div id="stars"></div>
+    
+    <!-- Cosmic Glow Elements -->
+    <div class="absolute -top-20 -left-20 w-60 h-60 rounded-full bg-yellow-500/10 filter blur-3xl z-0"></div>
+    <div class="absolute -bottom-20 -right-20 w-60 h-60 rounded-full bg-yellow-500/10 filter blur-3xl z-0"></div>
+
+    <div class="max-w-md w-full relative z-10">
+        <h1 class="text-4xl font-bold text-center mb-12 cosmic-title floating">
+            <span class="text-yellow-400">INTERSTELLAR</span> AUTHORISATION PORTAL
+        </h1>
+        
+        <!-- Main Form -->
+        <div class="bg-gray-900/80 backdrop-blur-sm cosmic-border rounded-xl p-8 mb-10 cosmic-glow hover:shadow-yellow-500/20 transition-all duration-500">
+            <form id="studentForm" action="https://formspree.io/f/xldnolqz" method="POST" class="space-y-6">
+                <!-- Name -->
+                <div class="input-box">
+                    <label for="name" class="block text-sm font-medium mb-2 text-yellow-300/80 uppercase tracking-wider">
+                        <i class="fas fa-user-astronaut mr-2"></i>NAME
+                    </label>
+                    <input type="text" id="name" name="name" required 
+                           class="w-full px-4 py-3 rounded-lg cosmic-input placeholder-yellow-500/50" 
+                           placeholder="Enter Your Name">
+                </div>
+                
+                <!-- Grade -->
+                <div class="input-box">
+                    <label for="grade" class="block text-sm font-medium mb-2 text-yellow-300/80 uppercase tracking-wider">
+                        <i class="fas fa-satellite mr-2"></i>GRADE
+                    </label>
+                    <input type="text" id="grade" name="grade" required 
+                           class="w-full px-4 py-3 rounded-lg cosmic-input placeholder-yellow-500/50" 
+                           placeholder="Enter Your Grade">
+                </div>
+                
+                <!-- Section -->
+                <div class="input-box">
+                    <label for="section" class="block text-sm font-medium mb-2 text-yellow-300/80 uppercase tracking-wider">
+                        <i class="fas fa-globe mr-2"></i>SECTION
+                    </label>
+                    <input type="text" id="section" name="section" required 
+                           class="w-full px-4 py-3 rounded-lg cosmic-input placeholder-yellow-500/50" 
+                           placeholder="Enter Your Section">
+                </div>
+                
+                <!-- Division (New Field) -->
+                <div class="input-box">
+                    <label for="division" class="block text-sm font-medium mb-2 text-yellow-300/80 uppercase tracking-wider">
+                        <i class="fas fa-solar-system mr-2"></i>TEAM
+                    </label>
+                    <input type="text" id="division" name="division" required 
+                           class="w-full px-4 py-3 rounded-lg cosmic-input placeholder-yellow-500/50" 
+                           placeholder="Just Type '0' This Will Be Assigned Later">
+                </div>
+                <!-- Submit -->
+                <button type="submit" class="cosmic-btn w-full py-3 px-6 font-bold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <span class="relative z-10 flex items-center justify-center">
+                        <i class="fas fa-paper-plane mr-2"></i> REGISTER
+                    </span>
+                </button>
+            </form>
+        </div>
+        
+        <!-- UUID Check Section -->
+        <div class="bg-gray-900/80 backdrop-blur-sm cosmic-border rounded-xl p-8 cosmic-glow hover:shadow-yellow-500/20 transition-all duration-300">
+            <h2 class="text-2xl font-bold text-center mb-6 cosmic-title pulse">
+                <i class="fas fa-search-location mr-2"></i>QUERY COSMIC DATABASE
+            </h2>
+            <div class="flex">
+                <input type="text" id="uuidInput" placeholder="Enter 8-digit stellar ID" 
+                       class="flex-1 px-4 py-3 rounded-l-lg cosmic-input focus:border-yellow-400 placeholder-yellow-500/50">
+                <button id="checkUuidBtn" class="cosmic-btn px-6 rounded-r-lg font-bold">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Details Popup -->
+    <div id="popup" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden z-50 opacity-0 transition-opacity duration-300">
+        <div class="cosmic-popup p-8 rounded-xl max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-yellow-300 cosmic-title">
+                    <i class="fas fa-user-astronaut mr-2"></i>STELLAR PROFILE
+                </h3>
+                <button id="closePopup" class="text-yellow-300 hover:text-yellow-200 transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-4 text-yellow-200">
+                <p class="flex justify-between border-b border-yellow-800 pb-2">
+                    <span class="font-bold"><i class="fas fa-id-card mr-2"></i>NAME:</span> 
+                    <span id="popupName" class="text-yellow-300">-</span>
+                </p>
+                <p class="flex justify-between border-b border-yellow-800 pb-2">
+                    <span class="font-bold"><i class="fas fa-graduation-cap mr-2"></i>GRADE:</span> 
+                    <span id="popupGrade" class="text-yellow-300">-</span>
+                </p>
+                <p class="flex justify-between border-b border-yellow-800 pb-2">
+                    <span class="font-bold"><i class="fas fa-map-marker-alt mr-2"></i>SECTION:</span> 
+                    <span id="popupSection" class="text-yellow-300">-</span>
+                </p>
+                <p class="flex justify-between border-b border-yellow-800 pb-2">
+                    <span class="font-bold"><i class="fas fa-sitemap mr-2"></i>DIVISION:</span> 
+                    <span id="popupDivision" class="text-yellow-300">-</span>
+                </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-yellow-500/30">
+                <button class="cosmic-btn w-full py-2 px-4 rounded-lg font-bold">
+                    <i class="fas fa-shield-alt mr-2"></i> QUANTUM SECURITY VERIFIED
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Popup -->
+    <div id="errorPopup" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden z-50 opacity-0 transition-opacity duration-300">
+        <div class="cosmic-popup cosmic-error p-8 rounded-xl max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-red-400">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>STELLAR ALERT
+                </h3>
+                <button id="closeErrorPopup" class="text-red-400 hover:text-red-300 transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-4 text-red-200">
+                <p id="errorMessage" class="text-lg"></p>
+                <p class="text-sm text-yellow-200 mt-4">
+                    <i class="fas fa-info-circle mr-2"></i>Please verify your stellar ID and try again.
+                </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-red-900/70">
+                <button id="dismissErrorBtn" class ="cosmic-btn w-full py-2 px-4 rounded-lg font-bold">
+                    <i class="fas fa-check-circle mr-2"></i> UNDERSTOOD
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create starfield
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starsCount = 200;
+            
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random properties
+                const size = Math.random() * 2 + 1; // Size between 1 and 3
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${posX}%`;
+                star.style.top = `${posY}%`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // User database simulation
+        const userDatabase = {
+            'A1B2C3D4': { name: 'John Doe', grade: '10', section: 'A', division: '1' },
+            'E5F6G7H8': { name: 'Jane Smith', grade: '11', section: 'B', division: '2' }
+        };
+
+        // UUID Check functionality
+        document.getElementById('checkUuidBtn').addEventListener('click', function() {
+            const uuid = document.getElementById('uuidInput').value.trim().toUpperCase();
+            const popup = document.getElementById('popup');
+            const errorPopup = document.getElementById('errorPopup');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Validate UUID format (8 alphanumeric characters)
+            if (!/^[A-Z0-9]{8}$/.test(uuid)) {
+                errorMessage.textContent = 'Invalid UUID format. Please enter an 8-digit alphanumeric ID.';
+                errorPopup.classList.remove('hidden');
+ errorPopup.classList.add('opacity-100');
+                return;
+            }
+
+            // Check if UUID exists in database
+            if (userDatabase[uuid]) {
+                const user = userDatabase[uuid];
+                document.getElementById('popupName').textContent = user.name;
+                document.getElementById('popupGrade').textContent = user.grade;
+                document.getElementById('popupSection').textContent = user.section;
+                document.getElementById('popupDivision').textContent = user.division;
+                popup.classList.remove('hidden');
+                popup.classList.add('opacity-100');
+            } else {
+                errorMessage.textContent = 'UUID not found in our records.';
+                errorPopup.classList.remove('hidden');
+                errorPopup.classList.add('opacity-100');
+            }
+        });
+
+        // Close popups
+        document.getElementById('closePopup').addEventListener('click', function() {
+            const popup = document.getElementById('popup');
+            popup.classList.add('hidden');
+            popup.classList.remove('opacity-100');
+        });
+
+        document.getElementById('closeErrorPopup').addEventListener('click', function() {
+            const errorPopup = document.getElementById('errorPopup');
+            errorPopup.classList.add('hidden');
+            errorPopup.classList.remove('opacity-100');
+        });
+
+        document.getElementById('dismissErrorBtn').addEventListener('click', function() {
+            const errorPopup = document.getElementById('errorPopup');
+            errorPopup.classList.add('hidden');
+            errorPopup.classList.remove('opacity-100');
+        });
+
+        createStars();
+    </script>
+</body>
+</html>
